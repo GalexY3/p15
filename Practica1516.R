@@ -7,11 +7,11 @@
 
 #1. Cargar (e instala) los paquetes que vas a utilizar
 
-#install.packages("foreign")
-#install.packages("sjmisc")
-#install.packages("tidyverse")
-#install.packages("ggthemes")
-#install.packages("gridExtra")
+install.packages("foreign")
+install.packages("sjmisc")
+install.packages("tidyverse")
+install.packages("ggthemes")
+install.packages("gridExtra")
 
 library(sjmisc)
 library(tidyverse)
@@ -20,7 +20,7 @@ library(gridExtra)
 
 #Limpia espacio y establece directorio de trabajo
 rm(list=ls())
-setwd("****")
+setwd("C:/rstudio/practica15")
 getwd()
 d <- foreign::read.spss("cis3145t.sav", to.data.frame = T)
 
@@ -45,23 +45,23 @@ frq(d$urnas16r)
 
 
 #G1.a) Set-up ggplot
-g1 <- ggplot(d, aes(x = as.numeric(___), y = ____))
+g1 <- ggplot(d, aes(x = as.numeric(edad), y = confpub))
 g1 
 
-#G1.b) Añadir geoms: barras
-g1 <- g1 + ________________________________
+#G1.b) Añadir geoms: puntos
+g1 <- g1 + geom_point(position="jitter", alpha=.3, shape=1)
 g1
 
 #G1.c) Añadir geoms: línea de ajuste
-g1 <- g1 + _____________________
+g1 <- g1 + geom_smooth(method="lm")
 g1
 
 #G1.d) Incluir facets
-g1 <- g1 + ____________________
+g1 <- g1 + facet_wrap(~ esta)
 g1
 
 #G1.e) Añadir etiquetas
-g1 <- g1 + labs(x=______, y=_________________________, title="G1. Relación entre edad y confianza en instituciones públicas \npor clase social" )
+g1 <- g1 + labs(x="Edad", y="Confianza en las instituciones públicas", title="G1. Relación entre edad y confianza en las instituciones públicas \npor clase social")
 g1
 
 ###########################################################
@@ -71,35 +71,37 @@ g1
 d2 <- filter(d, !is.na(urnas16r))
 
 #G2.a) Set-up ggplot
-g2 <- ggplot(d2, aes(___________________))
+g2 <- ggplot(d2, aes(x = esta, fill = urnas16r))
 g2 
 
-#G2.b) Añadir geoms: barras
-g2a <- g2 + __________ +
+#G2.b) Añadir geoms: barras (default)
+g2a <- g2 + geom_bar() +
   scale_x_discrete(labels = c("Alta", "Viejas Med", "Nuevas Med.", "Obr. cual", "Obr. no cual", "NC")) +
   labs(x="", y="", fill="")
 g2a
 
 #G2.c) Añadir geoms: barras - position="stack"
-g2b <- g2 + geom_bar(_________) +
-          scale_x_discrete(labels = c("Alta", "Viejas Med", "Nuevas Med.", "Obr. cual", "Obr. no cual", "NC")) +
-          labs(x="", y="", fill="")
+g2b <- g2 + geom_bar(position="stack") +
+  scale_x_discrete(labels = c("Alta", "Viejas Med", "Nuevas Med.", "Obr. cual", "Obr. no cual", "NC")) +
+  labs(x="", y="", fill="")
 g2b
 
 #G2.d) Añadir geoms: barras - position="dodge"
-g2c <- g2 + geom_bar(__________) +
+g2c <- g2 + geom_bar(position="dodge") +
   scale_x_discrete(labels = c("Alta", "Viejas Med", "Nuevas Med.", "Obr. cual", "Obr. no cual", "NC")) +
   labs(x="", y="", fill="")
 g2c
 
-#G2.d) Añadir geoms: barras - position="dodge"
-g2d <- g2 + geom_bar(___________) +
+#G2.d) Añadir geoms: barras - position="fill"
+g2d <- g2 + geom_bar(position="fill") +
   scale_x_discrete(labels = c("Alta", "Viejas Med", "Nuevas Med.", "Obr. cual", "Obr. no cual", "NC")) +
   labs(x="", y="", fill="")
 g2d
 
-#G2.e) Añadir etiquetas
-g2comb <- ______________________________
+#G2.e) Combinar los cuatro gráficos
+g2comb <- grid.arrange(g2a, g2b, g2c, g2d,
+                       ncol=2,
+                       top=quote("G4. Voto en 2016 por estatus social "))
 g2comb
 
 ###########################################################
@@ -113,13 +115,12 @@ g3
 #G3.b) añadir geom (scatter)
 g3 <- g3 + geom_point(position=position_jitter(.1), alpha=.3, shape=1)
 g3
-
 #G3.c) añadir stat (línea de ajuste)
-g3 <- g3 + _______________________
+g3 <- g3 + stat_smooth(method="lm")
 g3
 
 #G3.d) añadir stat (línea de ajuste para todos)
-g3 <- g3 + _______________________
+g3 <- g3 + stat_smooth(method="lm", aes(col=factor(1)))
 g3
 
 
@@ -174,7 +175,7 @@ g4 <- g4 + labs(x="", y="", title="G3. Distribuciones confianza en instituciones
 g4
 
 #G4.f) Probar different themes
-g4 <- g4 + theme_____()
+g4 <- g4 + theme_fivethirtyeight()
 
 g4
 
